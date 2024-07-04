@@ -1,12 +1,17 @@
 package br.com.alura.desafioTabelaFipe.principal;
 
+import br.com.alura.desafioTabelaFipe.model.Dados;
+import br.com.alura.desafioTabelaFipe.model.Modelos;
 import br.com.alura.desafioTabelaFipe.service.ConsumoApi;
+import br.com.alura.desafioTabelaFipe.service.ConverteDados;
 
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Principal {
 
     private Scanner leitura = new Scanner(System.in);
+    private ConverteDados conversor = new ConverteDados();
 
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
 
@@ -32,18 +37,26 @@ public class Principal {
         }
 
         var json = new ConsumoApi().obterDados(endereco);
-        System.out.println(json);
+        var marcas = conversor.obterLIsta(json, Dados.class);
+
+        marcas.stream()
+                .sorted(Comparator.comparing(Dados::codigo))
+                .forEach(System.out::println);
 
         System.out.println("Digite o código da marca desejada");
 
-        var marca = leitura.nextLine();
+        var modelo = leitura.nextLine();
+        endereco = endereco + "/" + modelo + "/modelos";
 
+        json = new ConsumoApi().obterDados(endereco);
 
-        if (opcao.toLowerCase().contains("carr")) {
-            endereco = URL_BASE + "carros/marcas/" + marca + "/modelos";
-        }
-        var jsonMarca = new ConsumoApi().obterDados(endereco);
-        System.out.println(jsonMarca);
+        var modelos = conversor.obterDados(json, Modelos.class);
+        System.out.println("\n Modelos dessa marca: " );
+
+        modelos.modelos().stream()
+                .sorted(Comparator.comparing(Dados::codigo))
+                .forEach(System.out::println);
+
 
 
 
