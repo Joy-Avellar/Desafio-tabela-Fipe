@@ -1,6 +1,6 @@
 package br.com.alura.desafioTabelaFipe.model;
 
-public record Dados(String nome, Integer codigo) {
+public record Dados(String nome, String codigo) {
 
     @Override
     public String toString() {
